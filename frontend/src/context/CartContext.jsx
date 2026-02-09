@@ -1,47 +1,43 @@
 import { createContext, useContext, useState } from "react";
-import { addToCartApi } from "../api/api";
+import { addToCartApi } from "../api/api.js";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  const addToCart = async (product) => {
-    const existing = cart.find((item) => item._id === product._id);
+  const addToCart = async (product, qty) => {
+    const existing = cart.find((i) => i._id === product._id);
 
     if (existing) {
       setCart(
-        cart.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
+        cart.map((i) =>
+          i._id === product._id
+            ? { ...i, quantity: i.quantity + qty }
+            : i
         )
       );
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([...cart, { ...product, quantity: qty }]);
     }
 
-    await addToCartApi({
-      productId: product._id,
-      quantity: 1,
-    });
+    await addToCartApi(product._id, qty);
   };
 
-  const removeFromCart = (id) => {
-    setCart(cart.filter((item) => item._id !== id));
-  };
+  const updateQuantity = (id, qty) =>
+    setCart(cart.map((i) => (i._id === id ? { ...i, quantity: qty } : i)));
 
-  const updateQuantity = (id, qty) => {
-    setCart(
-      cart.map((item) =>
-        item._id === id ? { ...item, quantity: qty } : item
-      )
-    );
-  };
+  const removeFromCart = (id) =>
+    setCart(cart.filter((i) => i._id !== id));
+
+  const total = cart.reduce(
+    (sum, i) => sum + i.price * i.quantity,
+    0
+  );
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQuantity }}
+      value={{ cart, addToCart, updateQuantity, removeFromCart, total }}
     >
       {children}
     </CartContext.Provider>

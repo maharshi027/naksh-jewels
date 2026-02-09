@@ -8,10 +8,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="nav-left">
-        <Link
-          to="/"
-          className={location.pathname === "/" ? "active" : ""}
-        >
+        <Link className={location.pathname === "/" ? "active" : ""} to="/">
           Products
         </Link>
       </div>
@@ -22,13 +19,17 @@ const Navbar = () => {
 
       <div className="nav-right">
         <Link
-          to="/cart"
-          className={location.pathname === "/cart" ? "active" : ""}
+          className={location.pathname === "/add-product" ? "active" : ""}
+          to="/add-product"
         >
-          Cart
-          {cart.length > 0 && (
-            <span className="cart-badge">{cart.length}</span>
-          )}
+          Add Product
+        </Link>
+
+        <Link
+          className={location.pathname === "/cart" ? "active" : ""}
+          to="/cart"
+        >
+          Cart ({cart.length})
         </Link>
       </div>
     </nav>

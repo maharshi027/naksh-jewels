@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchProducts } from "..//api/api.js";
+import { fetchProducts } from "../api/api";
 import ProductCard from "../components/ProductCart";
 
 const Products = () => {
@@ -11,8 +11,8 @@ const Products = () => {
 
   return (
     <div className="grid">
-      {products.map((product) => (
-        <ProductCard key={product._id} product={product} />
+      {products.map((p) => (
+        <ProductCard key={p._id} product={p} />
       ))}
     </div>
   );

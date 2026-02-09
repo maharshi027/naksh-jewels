@@ -1,29 +1,30 @@
 import { useCart } from "../context/CartContext";
 
 const Cart = () => {
-  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { cart, updateQuantity, removeFromCart, total } = useCart();
 
-  if (cart.length === 0) return <h2>Cart is empty</h2>;
+  if (!cart.length) return <h2>Cart is empty</h2>;
 
   return (
-    <div>
-      {cart.map((item) => (
-        <div key={item._id} className="cart-item">
-          <h3>{item.name}</h3>
-          <p>₹{item.price}</p>
-
+    <div className="cart-container">
+      {cart.map((i) => (
+        <div className="cart-item" key={i._id}>
+          <h3>{i.name}</h3>
+          <p>₹{i.price}</p>
           <input
             type="number"
+            value={i.quantity}
             min="1"
-            value={item.quantity}
             onChange={(e) =>
-              updateQuantity(item._id, Number(e.target.value))
+              updateQuantity(i._id, Number(e.target.value))
             }
           />
-
-          <button onClick={() => removeFromCart(item._id)}>Remove</button>
+          <button onClick={() => removeFromCart(i._id)}>
+            Remove
+          </button>
         </div>
       ))}
+      <h2 className="cart-total">Total: ₹{total}</h2>
     </div>
   );
 };
