@@ -15,7 +15,7 @@ export const addToCartApi = async (productId, quantity) => {
 };
 
 export const createProductApi = async (formData) => {
-  const res = await fetch(`${BASE_URL}/products`, {
+  const res = await fetch(`${BASE_URL}/add-product`, {
     method: "POST",
     body: formData
   });
