@@ -1,13 +1,16 @@
+version: "3.9"
 
-version: '3'
 services:
   backend:
-    build: ./backend
+    image: maharshi027/naksh-backend:1.0
     ports:
-      - "5000:5000"
+      - "7000:7000"
+    env_file:
+      - ./backend/.env
+
   frontend:
-    build: ./frontend
+    image: maharshi027/naksh-frontend:1.0
     ports:
-      - "5173:5173"
+      - "5173:80"
     depends_on:
       - backend
