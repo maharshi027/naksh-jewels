@@ -11,6 +11,7 @@ const AddProduct = () => {
 
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,31 +21,38 @@ const AddProduct = () => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setPreview(URL.createObjectURL(file)); // Better way for UI preview
+      setPreview(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    if (!imageFile) return alert("Please upload an image");
 
-  if (!imageFile) return alert("Please upload an image");
+    setLoading(true);
 
-  const formData = new FormData();
-  formData.append("name", form.name);
-  formData.append("price", form.price);
-  formData.append("description", form.description);
-  formData.append("stock", form.stock);
-  
-  // This sends the actual file binary, not a string
-  formData.append("image", imageFile); 
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("price", form.price);
+    formData.append("description", form.description);
+    formData.append("stock", form.stock);
+    formData.append("image", imageFile);
 
-  try {
-    await createProductApi(formData);
-    alert("Product added!");
-  } catch (error) {
-    console.error("Upload Error:", error.response?.data || error.message);
-  }
-};
+    try {
+      await createProductApi(formData);
+      alert("Product added successfully!");
+
+      setForm({ name: "", price: "", description: "", stock: 1 });
+      setImageFile(null);
+      setPreview(null);
+    } catch (error) {
+      console.error("Upload Error:", error.response?.data || error.message);
+      alert("Failed to add product. Please check console.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="add-product-container">
       <div className="card">
@@ -52,17 +60,17 @@ const AddProduct = () => {
         <form onSubmit={handleSubmit} className="add-product-form">
           <div className="input-group">
             <label>Product Name</label>
-            <input type="text" name="name" value={form.name} onChange={handleChange} required />
+            <input type="text" name="name" value={form.name} onChange={handleChange} required disabled={loading} />
           </div>
 
           <div className="input-group">
-            <label>Price ($)</label>
-            <input type="number" name="price" value={form.price} onChange={handleChange} required />
+            <label>Price (Rs.)</label>
+            <input type="number" name="price" value={form.price} onChange={handleChange} required disabled={loading} />
           </div>
 
           <div className="input-group">
             <label>Product Image</label>
-            <input type="file" accept="image/*" onChange={handleImageChange} required />
+            <input type="file" accept="image/*" onChange={handleImageChange} required disabled={loading} />
           </div>
 
           {preview && (
@@ -73,15 +81,17 @@ const AddProduct = () => {
 
           <div className="input-group">
             <label>Stock Quantity</label>
-            <input type="number" name="stock" value={form.stock} onChange={handleChange} />
+            <input type="number" name="stock" value={form.stock} onChange={handleChange} disabled={loading} />
           </div>
 
           <div className="input-group">
             <label>Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} />
+            <textarea name="description" value={form.description} onChange={handleChange} disabled={loading} />
           </div>
 
-          <button type="submit" className="submit-btn">Create Product</button>
+          <button type="submit" className="submit-btn" disabled={loading}>
+            {loading ? "Creating..." : "Create Product"}
+          </button>
         </form>
       </div>
     </div>
