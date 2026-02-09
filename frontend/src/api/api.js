@@ -1,24 +1,32 @@
-export const BASE_URL = "http://localhost:7000/api";
+import api from "./Axios";
 
 export const fetchProducts = async () => {
-  const res = await fetch(`${BASE_URL}/products`);
-  const json = await res.json();
-  return json.data;
-};
-
-export const addToCartApi = async (productId, quantity) => {
-  await fetch(`${BASE_URL}/cart`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ productId, quantity }),
-  });
+  const res = await api.get("/products");
+  return res.data.data;
 };
 
 export const createProductApi = async (formData) => {
-  const res = await fetch(`${BASE_URL}/add-product`, {
-    method: "POST",
-    body: formData
-  });
+  const res = await api.post("/add-product", formData);
+  return res.data;
+};
 
-  return res.json();
+export const addToCartApi = async (productId, quantity) => {
+  const res = await api.post("/cart", {
+    productId,
+    quantity,
+  });
+  return res.data;
+};
+
+export const updateCartQuantityApi = async (productId, quantity) => {
+  const res = await api.put("/cart", {
+    productId,
+    quantity,
+  });
+  return res.data;
+};
+
+export const removeFromCartApi = async (productId) => {
+  const res = await api.delete(`/cart/${productId}`);
+  return res.data;
 };

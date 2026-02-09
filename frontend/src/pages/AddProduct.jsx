@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createProductApi } from "../api/api.js";
+import { createProductApi } from "../api/api";
 
 const AddProduct = () => {
   const [form, setForm] = useState({
@@ -31,20 +31,25 @@ const AddProduct = () => {
       alert("Please select a product image");
       return;
     }
+
     const formData = new FormData();
     formData.append("name", form.name);
     formData.append("price", Number(form.price));
     formData.append("description", form.description);
     formData.append("stock", Number(form.stock));
-    formData.append("image", preview);
+    formData.append("image", imageFile); // ✅ FIXED
 
-    await createProductApi(formData);
+    try {
+      await createProductApi(formData);
+      alert("Product added successfully");
 
-    alert("Product added successfully");
-
-    setForm({ name: "", price: "", description: "", stock: 1 });
-    setImageFile(null);
-    setPreview(null);
+      setForm({ name: "", price: "", description: "", stock: 1 });
+      setImageFile(null);
+      setPreview(null);
+    } catch (err) {
+      console.error("Add product failed:", err.response?.data || err);
+      alert("Failed to add product");
+    }
   };
 
   return (
@@ -88,8 +93,7 @@ const AddProduct = () => {
         <input
           type="number"
           name="stock"
-          placeholder="Stock Quantity"
-           min="0"   // stock negative not allowed can be problem 
+          min="0"
           value={form.stock}
           onChange={handleChange}
         />

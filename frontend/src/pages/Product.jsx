@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import { fetchProducts } from "../api/api";
+import { fetchProducts } from "../api/api.js";
 import ProductCard from "../components/ProductCart";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetchProducts().then(setProducts);
+    const loadProducts = async () => {
+      try {
+        const data = await fetchProducts();
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to fetch products", err);
+      }
+    };
+
+    loadProducts();
   }, []);
 
   return (
