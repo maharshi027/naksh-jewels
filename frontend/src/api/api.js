@@ -6,27 +6,15 @@ export const fetchProducts = async () => {
 };
 
 export const createProductApi = async (formData) => {
-  const res = await api.post("/add-product", formData);
+  const res = await api.post("/add-product", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 
 export const addToCartApi = async (productId, quantity) => {
-  const res = await api.post("/cart", {
-    productId,
-    quantity,
-  });
-  return res.data;
-};
-
-export const updateCartQuantityApi = async (productId, quantity) => {
-  const res = await api.put("/cart", {
-    productId,
-    quantity,
-  });
-  return res.data;
-};
-
-export const removeFromCartApi = async (productId) => {
-  const res = await api.delete(`/cart/${productId}`);
+  const res = await api.post("/cart", { productId, quantity });
   return res.data;
 };
